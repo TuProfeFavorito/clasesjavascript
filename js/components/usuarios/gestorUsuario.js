@@ -3,6 +3,7 @@ class GestorUsuarios {
     constructor() {
         this.servicios = new Servicios();
         //todas las variables que deben inicializarse
+        this.token = '';
         this.usuarios = []; 
         //LOS USUARIOS DE LA FUNCION GESTORUSUARIOS
         this.init();
@@ -23,19 +24,25 @@ class GestorUsuarios {
             if (error) {
                 alert('Usuario o contraseña incorrectos');
             } else {
-                this.usuarios.push(response.usuario);
+                //this.usuarios.push(response.usuario);
                 //agrega un campo al array
-                alert('¡Login exitoso!');
-                this.cleanMain();
+                console.log(response);
+                if (response.status == 200) {
+                    alert('¡Login exitoso!');
+                    this.token = response.token;
+                    this.cleanMain();
+                    this.mostrarUsuarios(this.token);
+                }
             }
         });
     }
-    mostrarUsuarios() {
-        this.servicios.obtenerUsuarios((error, response) => {
+    mostrarUsuarios(token) {
+        this.servicios.obtenerUsuarios(token, (error, response) => {
             if (error) {
                 console.error('Error al obtener usuarios:', error);
             } else {
-                this.renderizarUsuarios(response.usuarios);
+                console.log(response);
+                this.renderizarUsuarios(response);
             }
         });
     }
@@ -45,7 +52,7 @@ class GestorUsuarios {
     renderizarUsuarios(usuarios) {
         //usuarios ==> Array
         usuarios.forEach(usuario => {
-            $('#mainlogin').append(`<div class="usuario">${usuario}</div>`);
+            $('#mainlogin').append(`<div class="usuario">${usuario.name}</div>`);
         });
     }
     renderLogin() {
